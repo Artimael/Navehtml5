@@ -17,10 +17,18 @@
                 {
                     var canvas=document.getElementById('micanvas');
                     var ctx=canvas.getContext('2d');
-                    ctx.arc(20,20,10,a_radianes(90),a_radianes(360));//si es true antireloj,por defecto es false
-                    ctx.arc(50,50,30,a_radianes(90),a_radianes(360));//si es true antireloj,por defecto es false
-                    //x,y,radio,anguloInicial,anguloFianl,reloj
-                    ctx.stroke();//ctx.stroke();
+                    ctx.beginPath();
+                    ctx.arc(50,50,10,a_radianes(0),a_radianes(360),true);
+                    ctx.moveTo(50,80);//mueve el contexto
+                    ctx.arc(50,50,30,a_radianes(90),a_radianes(180),true);
+                    ctx.moveTo(160,50);//mueve el contexto
+                    ctx.arc(150,50,10,a_radianes(0),a_radianes(360),true);
+                    ctx.moveTo(150,80);//mueve el contexto
+                    ctx.arc(150,50,30,a_radianes(90),a_radianes(360),false);
+                    ctx.stroke();//canvas traza la linea para continuar con el dibujo
+                    ctx.beginPath();//si se inicia de nuevo se elimina el ctx anterior
+                    ctx.arc(90,110,30,a_radianes(0),a_radianes(180),false);
+                    ctx.stroke();
                 }
                 
                 function a_radianes(grados)
