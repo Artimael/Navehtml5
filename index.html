@@ -15,35 +15,10 @@
                 window.addEventListener('load',init);
                 function init()
                 {
-                    var canvas=document.getElementById('micanvas');
-                    var ctx=canvas.getContext('2d');
-                    ctx.strokeStyle='black'
-                    dibujar_cara(ctx,'red');
-                    ctx.strokeRect(0,0,20,30);
+                    var intervalo=window.setInterval(function(){console.log("Intervalo")},1000);//accion,intervalo de tiempo en miliseg
+                    setTimeout(function(){window.clearInterval(intervalo);},10000);// detiene el intervalo despues de 10 seg
                 }
-                function a_radianes(grados)
-                {
-                    return (grados*Math.PI)/180;
-                }
-                function dibujar_cara(ctx,color)
-                {
-                     ctx.save();//guarda el punto
-                     ctx.strokeStyle=color;//ctx.stroke();
-+                    ctx.beginPath();
-                     ctx.arc(50,50,10,a_radianes(0),a_radianes(360),true);//si es true antireloj,por defecto es false
-                     ctx.moveTo(50,80);//mueve el contexto
-                     ctx.arc(50,50,30,a_radianes(90),a_radianes(180),true);//si es true antireloj,por defecto es false
-                     ctx.moveTo(160,50);
-                     ctx.arc(150,50,10,a_radianes(0),a_radianes(360),true);//si es true antireloj,por defecto es false
-                     ctx.moveTo(150,80);
-                     ctx.arc(150,50,30,a_radianes(90),a_radianes(360),false);//si es true antireloj,por defecto es false
-                     ctx.stroke();
-                     ctx.beginPath();
-                     ctx.arc(90,110,30,a_radianes(0),a_radianes(180));
-                     ctx.stroke();
-                     ctx.restore();//regresa al punto
-                }
-                
+
 
             </script>
         </body>
