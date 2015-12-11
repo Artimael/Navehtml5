@@ -11,30 +11,19 @@
         
         <body>
             <canvas id='micanvas'>Si tu navegador no soporta Canvas vera este mensaje</canvas>
+            <img src="img.png" id='img' style='display:none;'>
             <script>
                 window.addEventListener('load',init);
                 function init()
                 {
                     var canvas=document.getElementById('micanvas');
                     var ctx=canvas.getContext('2d');
-                    ctx.beginPath();
-                    ctx.arc(50,50,10,a_radianes(0),a_radianes(360),true);
-                    ctx.moveTo(50,80);//mueve el contexto
-                    ctx.arc(50,50,30,a_radianes(90),a_radianes(180),true);
-                    ctx.moveTo(160,50);//mueve el contexto
-                    ctx.arc(150,50,10,a_radianes(0),a_radianes(360),true);
-                    ctx.moveTo(150,80);//mueve el contexto
-                    ctx.arc(150,50,30,a_radianes(90),a_radianes(360),false);
-                    ctx.stroke();//canvas traza la linea para continuar con el dibujo
-                    ctx.beginPath();//si se inicia de nuevo se elimina el ctx anterior
-                    ctx.arc(90,110,30,a_radianes(0),a_radianes(180),false);
-                    ctx.stroke();
+                    var img= document.getElementById("img");
+                    ctx.drawImage(img,0,0,300,200);//imagen,x,y,ancho,alto
+   
                 }
                 
-                function a_radianes(grados)
-                {
-                    return (grados * Math.PI)/180;    
-                }
+
             </script>
         </body>
     </head>
