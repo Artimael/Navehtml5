@@ -12,16 +12,24 @@
         <body>
             <canvas id='micanvas'>Si tu navegador no soporta Canvas vera este mensaje</canvas>
             <script>
-                var tutor ={
-                    nombre:'Uriel',
-                    edad:19,
-                    correo:'wclai@ing.ucsc.cl'
-                };
-                
+                var arreglo= new Array ();//var arreglo ? [];
+                arreglo=[1,2,3];
                 window.addEventListener('load',init);
                 function init()
                 {
-                    console.log("Nombre del tutor:"+ tutor["nombre"] );
+                  console.log(arreglo[0]);
+                  console.log(arreglo.length);
+                    
+                  for (var i= arreglo.length -1; i>=0;i--)
+                      {
+                          console.log(arreglo[i]);
+                      }
+                        arreglo.push(4);
+                        arreglo.push(5);
+                  for (var i=0; i<arreglo.length;i++)
+                      {
+                          console.log(arreglo[i]);
+                      }
                 }
             </script>
         </body>
