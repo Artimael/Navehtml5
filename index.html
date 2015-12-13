@@ -2,36 +2,9 @@
 <html>
     <head>
         <title>Naves HTML5</title>
-        <style type="text/css">
-            canvas
-            {
-                border: solid;
-            }
-        </style>
-        
         <body>
-            <canvas id='micanvas'>Si tu navegador no soporta Canvas vera este mensaje</canvas>
-            <script>
-                var arreglo= new Array ();//var arreglo ? [];
-                arreglo=[1,2,3];
-                window.addEventListener('load',init);
-                function init()
-                {
-                  console.log(arreglo[0]);
-                  console.log(arreglo.length);
-                    
-                  for (var i= arreglo.length -1; i>=0;i--)
-                      {
-                          console.log(arreglo[i]);
-                      }
-                        arreglo.push(4);
-                        arreglo.push(5);
-                  for (var i=0; i<arreglo.length;i++)
-                      {
-                          console.log(arreglo[i]);
-                      }
-                }
-            </script>
+            <canvas id='game' width='600' height='380'>Si tu navegador no soporta Canvas vera este mensaje</canvas>
+            <script src='main.js'></script>
         </body>
     </head>
 </html>
