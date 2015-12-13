@@ -5,13 +5,17 @@ var ctx = canvas.getContext('2d');
 var nave={
             x:100,
             y:canvas.height-100,
-            width:50,
+            width:30,
             height:50
 }
 
+var teclado={
+    
+}
 
 //Definir variables para las imagenes var fondo; 
 
+var fondo;
 //Definicion de funciones 
 function loadMedia()
 {
@@ -35,6 +39,34 @@ function dibujarNave()
     ctx.restore();
 }
 
+
+function agregarEventosTeclado()
+{
+    agregarEvento(document,"keydown",function(e){
+       //ponemos en true la tecla presionada
+        teclado[e.keyCode]=true;    
+    });
+    
+    agregarEvento(document,"keyup",function(e){
+       //ponemos en true la tecla que dejo de ser presionada
+        teclado[e.keyCode]=false;    
+    });
+    
+        function agregarEvento(elemento,nombreEvento,funcion)
+        {
+            if(elemento.addEventListener)// si existe utilizalo chrome firefox opera
+            {
+                elemento.addEventListener(nombreEvento,funcion,false);
+            }
+            else if(elemento.attachEvent))// Internet explorer
+            {
+                elemento.attachEvent(nombreEvento,funcion);
+            }
+
+        }
+
+}
+
 function frameLoop()
 {
     dibujarFondo();
@@ -44,3 +76,4 @@ function frameLoop()
 //ejecucion de funciones
 
 loadMedia();
+agregarEventosTeclado();
