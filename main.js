@@ -9,13 +9,12 @@ var nave={
             height:50
 }
 
-var teclado={
-    
-}
+var teclado={}
+var disparos=[];
 
 //Definir variables para las imagenes var fondo; 
 
-var fondo;
+var fondo,imgNave;
 //Definicion de funciones 
 function loadMedia()
 {
@@ -24,6 +23,8 @@ function loadMedia()
     fondo.onload = function(){ 
         var intervalo =         window.setInterval(frameLoop,1000/55); 
     }
+    imgNave= new Image();
+    imgNave.src ='nave.png';
 } 
 
 function dibujarFondo()
@@ -35,10 +36,21 @@ function dibujarNave()
 {
     ctx.save(); // guarda la informacion actual del contexto
     ctx.fillStyle='white';
-    ctx.fillRect(nave.x,nave.y,nave.width,nave.height);
+    ctx.drawImage(imgNave,nave.x,nave.y,nave.width,nave.height);
     ctx.restore();
 }
 
+function dibujarDisparos()
+{
+    ctx.save();
+    ctx.fillStyle='white';
+    for (var i in disparos)
+        {
+            var disparo = disparos[i];
+            ctx.fillRect(disparo.x,disparo.y,disparo.width,disparo.height);
+        }
+    ctx.restore();
+}
 
 function agregarEventosTeclado()
 {
@@ -68,6 +80,29 @@ function agregarEventosTeclado()
 
 }
 
+
+function moverDisparos()
+{
+    for(var i in disparos)
+        {
+          var disparo=disparos[i]; 
+            disparo.y -=2;
+        }
+    disparos = disparos.filter(function(disparo){
+        return disparo.y >0;
+    }); // devolver un arreglo que cumpla con cierta condicion
+}
+
+function fire()
+{
+    disparos.push({
+       x:nave.x+20,
+       y:nave.y-10,
+       width:10,
+       height:30
+    });
+}
+
 function moverNave()
 {
     if(teclado[37])//IZQUIERDA
@@ -85,12 +120,28 @@ function moverNave()
             nave.x=limite;
     }
     
+    if(teclado[32]) //BARRA ESPACIADORA
+        {
+            if(!teclado.fire)
+                {
+                  fire();
+                    teclado.fire =true;
+                }
+
+        }
+    else 
+        {
+            teclado.fire=false;
+        }
+    
 }
 
 function frameLoop()
 {
     moverNave();
+    moverDisparos();
     dibujarFondo();
+    dibujarDisparos();
     dibujarNave();
 } 
 
