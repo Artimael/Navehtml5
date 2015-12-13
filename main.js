@@ -44,7 +44,8 @@ function agregarEventosTeclado()
 {
     agregarEvento(document,"keydown",function(e){
        //ponemos en true la tecla presionada
-        teclado[e.keyCode]=true;    
+        teclado[e.keyCode]=true;   
+        console.log(e.keyCode);
     });
     
     agregarEvento(document,"keyup",function(e){
@@ -58,7 +59,7 @@ function agregarEventosTeclado()
             {
                 elemento.addEventListener(nombreEvento,funcion,false);
             }
-            else if(elemento.attachEvent))// Internet explorer
+            else if(elemento.attachEvent)// Internet explorer
             {
                 elemento.attachEvent(nombreEvento,funcion);
             }
@@ -67,8 +68,28 @@ function agregarEventosTeclado()
 
 }
 
+function moverNave()
+{
+    if(teclado[37])//IZQUIERDA
+    {
+        nave.x -=6;//VELOCIDAD DE LA NAVE
+        if(nave.x<0)
+            nave.x=0;
+    }
+    
+    if(teclado[39])//DERECHA
+    {
+        var limite = canvas.width - nave.width;
+        nave.x +=6;
+        if(nave.x>limite)
+            nave.x=limite;
+    }
+    
+}
+
 function frameLoop()
 {
+    moverNave();
     dibujarFondo();
     dibujarNave();
 } 
