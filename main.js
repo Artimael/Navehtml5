@@ -1,6 +1,7 @@
 //Código //objetos importantes de canvas. 
 var canvas = document.getElementById('game'); 
 var ctx = canvas.getContext('2d'); 
+
 //Crear objeto nave
 var nave={
             x:100,
@@ -9,23 +10,50 @@ var nave={
             height:50
 }
 
-var teclado={}
-var disparos=[];
+var juego={
+            estado:'iniciando'
+};
 
-//Definir variables para las imagenes var fondo; 
+//Definir variables 
 
 var fondo,imgNave;
+var teclado={};
+//arreglo que almacena los disparos
+var disparos=[];
+//arreglo que almacena los enemigos
+var enemigos=[];
+
 //Definicion de funciones 
+
 function loadMedia()
 {
     fondo = new Image(); 
     fondo.src = 'space.png'; 
-    fondo.onload = function(){ 
+    fondo.onload = function()
+    { 
         var intervalo =         window.setInterval(frameLoop,1000/55); 
     }
     imgNave= new Image();
     imgNave.src ='nave.png';
 } 
+
+function dibujarEnemigos()
+{
+    for(var i in enemigos)
+        {
+            var enemigo=enemigos[i];
+            ctx.save();
+            if(enemigo.estado=='vivo')
+                {
+                    ctx.fillStyle='red';
+                }
+            if(enemigo.estado=='muerto')
+                {
+                    ctx.fillStyle='black';
+                }
+            ctx.fillRect(enemigo.x,enemigo.y,enemigo.width,enemigo.height);
+        }
+}
 
 function dibujarFondo()
 { 
@@ -35,7 +63,6 @@ function dibujarFondo()
 function dibujarNave()
 {
     ctx.save(); // guarda la informacion actual del contexto
-    ctx.fillStyle='white';
     ctx.drawImage(imgNave,nave.x,nave.y,nave.width,nave.height);
     ctx.restore();
 }
@@ -57,7 +84,6 @@ function agregarEventosTeclado()
     agregarEvento(document,"keydown",function(e){
        //ponemos en true la tecla presionada
         teclado[e.keyCode]=true;   
-        console.log(e.keyCode);
     });
     
     agregarEvento(document,"keyup",function(e){
@@ -99,8 +125,26 @@ function fire()
        x:nave.x+20,
        y:nave.y-10,
        width:10,
-       height:30
+       height:25
     });
+}
+
+function actualizaEnemigos()
+{
+    if(juego.estado=='iniciando')
+        {
+            for(var i=0;i<10;i++)
+                {
+                    enemigos.push({
+                       x:10 +(i*50),
+                       y:10,
+                       width:40,
+                       height:40,
+                       estado:'vivo'
+                    });
+                }
+            juego.estado=='jugando';
+        }
 }
 
 function moverNave()
@@ -139,8 +183,10 @@ function moverNave()
 function frameLoop()
 {
     moverNave();
+    actualizaEnemigos();
     moverDisparos();
     dibujarFondo();
+    dibujarEnemigos();
     dibujarDisparos();
     dibujarNave();
 } 
