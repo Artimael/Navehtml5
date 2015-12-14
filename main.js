@@ -16,7 +16,7 @@ var juego={
 
 //Definir variables 
 
-var fondo,imgNave;
+var fondo,imgNave,imgEnemigo;
 var teclado={};
 //arreglo que almacena los disparos
 var disparos=[];
@@ -31,28 +31,34 @@ function loadMedia()
     fondo.src = 'space.png'; 
     fondo.onload = function()
     { 
-        var intervalo =         window.setInterval(frameLoop,1000/55); 
+        var intervalo =         window.setInterval(frameLoop,1000/40); //velocidad con que carga las cosas
     }
     imgNave= new Image();
     imgNave.src ='nave.png';
+    imgEnemigo= new Image();
+    imgEnemigo.src='enemy.png';
 } 
 
 function dibujarEnemigos()
 {
+    ctx.save();
     for(var i in enemigos)
         {
             var enemigo=enemigos[i];
             ctx.save();
             if(enemigo.estado=='vivo')
                 {
-                    ctx.fillStyle='red';
+                    ctx.fillStyle='green';
                 }
             if(enemigo.estado=='muerto')
                 {
                     ctx.fillStyle='black';
                 }
-            ctx.fillRect(enemigo.x,enemigo.y,enemigo.width,enemigo.height);
+            ctx.drawImage(imgEnemigo,enemigo.x,enemigo.y,enemigo.width,enemigo.height);
+            // ctx.fillRect(enemigo.x,enemigo.y,enemigo.width,enemigo.height);
+            
         }
+    ctx.restore();
 }
 
 function dibujarFondo()
@@ -64,6 +70,9 @@ function dibujarNave()
 {
     ctx.save(); // guarda la informacion actual del contexto
     ctx.drawImage(imgNave,nave.x,nave.y,nave.width,nave.height);
+    //cambiar a Imagen borrar fillstyle y fillrect
+    //ctx.fillStyle='red';
+   // ctx.fillRect(nave.x,nave.y,nave.width,nave.height);
     ctx.restore();
 }
 
@@ -129,24 +138,6 @@ function fire()
     });
 }
 
-function actualizaEnemigos()
-{
-    if(juego.estado=='iniciando')
-        {
-            for(var i=0;i<10;i++)
-                {
-                    enemigos.push({
-                       x:10 +(i*50),
-                       y:10,
-                       width:40,
-                       height:40,
-                       estado:'vivo'
-                    });
-                }
-            juego.estado=='jugando';
-        }
-}
-
 function moverNave()
 {
     if(teclado[37])//IZQUIERDA
@@ -180,12 +171,44 @@ function moverNave()
     
 }
 
+function actualizaEnemigos()
+{
+    if(juego.estado=='iniciando')
+        {
+            for(var i=0;i<10;i++)
+                {
+                    enemigos.push({
+                       x:10 +(i*50),
+                       y:10,
+                       width:40,
+                       height:30,
+                       estado:'vivo',
+                       contador:0
+                    });
+                }
+            juego.estado='jugando';
+        }
+ 
+     for(var i in enemigos)
+      {
+         var enemigo= enemigos[i];          
+         if(!enemigo)continue;          
+         if(enemigo && enemigo.estado=='vivo')
+             {
+                 enemigo.contador++;
+                 enemigo.x +=Math.sin(enemigo.contador * Math.PI /90)*5;
+             }
+      }
+  
+}
+
+
 function frameLoop()
 {
     moverNave();
-    actualizaEnemigos();
     moverDisparos();
     dibujarFondo();
+    actualizaEnemigos();
     dibujarEnemigos();
     dibujarDisparos();
     dibujarNave();
