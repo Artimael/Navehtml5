@@ -41,7 +41,6 @@ function loadMedia()
 
 function dibujarEnemigos()
 {
-    ctx.save();
     for(var i in enemigos)
         {
             var enemigo=enemigos[i];
@@ -53,12 +52,13 @@ function dibujarEnemigos()
             if(enemigo.estado=='muerto')
                 {
                     ctx.fillStyle='black';
+                    console.log('enemigo murio');
                 }
-            ctx.drawImage(imgEnemigo,enemigo.x,enemigo.y,enemigo.width,enemigo.height);
-            // ctx.fillRect(enemigo.x,enemigo.y,enemigo.width,enemigo.height);
-            
+            //ctx.drawImage(imgEnemigo,enemigo.x,enemigo.y,enemigo.width,enemigo.height);
+             ctx.fillRect(enemigo.x,enemigo.y,enemigo.width,enemigo.height);
+         ctx.restore();   
         }
-    ctx.restore();
+        
 }
 
 function dibujarFondo()
@@ -69,10 +69,10 @@ function dibujarFondo()
 function dibujarNave()
 {
     ctx.save(); // guarda la informacion actual del contexto
-    ctx.drawImage(imgNave,nave.x,nave.y,nave.width,nave.height);
+    //ctx.drawImage(imgNave,nave.x,nave.y,nave.width,nave.height);
     //cambiar a Imagen borrar fillstyle y fillrect
-    //ctx.fillStyle='red';
-   // ctx.fillRect(nave.x,nave.y,nave.width,nave.height);
+    ctx.fillStyle='red';
+    ctx.fillRect(nave.x,nave.y,nave.width,nave.height);
     ctx.restore();
 }
 
@@ -114,7 +114,6 @@ function agregarEventosTeclado()
         }
 
 }
-
 
 function moverDisparos()
 {
@@ -196,23 +195,83 @@ function actualizaEnemigos()
          if(enemigo && enemigo.estado=='vivo')
              {
                  enemigo.contador++;
-                 enemigo.x +=Math.sin(enemigo.contador * Math.PI /90)*5;
+                 enemigo.x +=Math.sin(enemigo.contador * Math.PI /90)*1.5;
              }
       }
-  
+    
+     if(enemigo && enemigo.estado=='hit')
+        {
+            enemigo.contador++;
+            if(enemigo.contador>=20)
+                {
+                    enemigo.contador='muerto';
+                    enemigo.contador=0;
+                }
+        }
+       enemigos=enemigos.filter(function(enemigo){
+       if(enemigo && enemigo.estado !='muerto') return true;
+        return false;     
+    });
 }
 
+function hit(a,b)
+{
+    var hit=false;   
+    
+    if(b.x + b.width>= a.x && b.x <a.x + a.width)//colision horizontal
+    {
+        if(b.y+b.height >= a.y && b.y  < a.y + a.height)//colision vertical
+        {
+            hit=true;
+        }
+    }
+    if(b.x <= a.x && b.x + b.width >= a.x+ a.width)//colision de a con b
+    {
+        if(b.y <= a.y && b.y + b.height >= a.y + a.height)
+            {
+                hit=true;
+            }
+    }
+    if(a.x <= b.x && a.x + a.width >= b.x + b.width)
+    {
+        if(a.y <= b.y && a.y + a.height >= b.y + b.height)
+        {
+            hit=true;
+        }
+    }
+    return hit;
+}
+
+function verificarContacto()
+{
+    for(var i in disparos)
+        {
+            var disparo=disparos[i];
+            for(j in enemigos)
+                {
+                    var enemigo=enemigos[j];
+                    if(hit(disparo,enemigo))
+                        {
+                            enemigo.estado='hit';
+                            enemigo.contador=0;
+                            
+                        }
+                }
+        }
+}
 
 function frameLoop()
 {
     moverNave();
     moverDisparos();
     dibujarFondo();
+    verificarContacto();
     actualizaEnemigos();
     dibujarEnemigos();
     dibujarDisparos();
     dibujarNave();
 } 
+
 
 //ejecucion de funciones
 
