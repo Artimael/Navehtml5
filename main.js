@@ -3,28 +3,29 @@ var canvas = document.getElementById('game');
 var ctx = canvas.getContext('2d'); 
 
 //Crear objeto nave
-var nave={
+var nave=
+{
             x:100,
             y:canvas.height-100,
-            width:30,
-            height:50
-}
+            width:52,
+            height:32
+};
 
-var juego={
+var juego=
+{
             estado:'iniciando'
 };
 
 //Definir variables 
-
 var fondo,imgNave,imgEnemigo;
 var teclado={};
 //arreglo que almacena los disparos
 var disparos=[];
+var disparosEnemigos=[];
 //arreglo que almacena los enemigos
 var enemigos=[];
 
 //Definicion de funciones 
-
 function loadMedia()
 {
     fondo = new Image(); 
@@ -41,24 +42,18 @@ function loadMedia()
 
 function dibujarEnemigos()
 {
-    for(var i in enemigos)
-        {
-            var enemigo=enemigos[i];
-            ctx.save();
-            if(enemigo.estado=='vivo')
-                {
-                    ctx.fillStyle='green';
-                }
-            if(enemigo.estado=='muerto')
-                {
-                    ctx.fillStyle='black';
-                    console.log('enemigo murio');
-                }
-            //ctx.drawImage(imgEnemigo,enemigo.x,enemigo.y,enemigo.width,enemigo.height);
-             ctx.fillRect(enemigo.x,enemigo.y,enemigo.width,enemigo.height);
-         ctx.restore();   
-        }
-        
+    for(var i in enemigos){
+      var enemigo = enemigos[i];
+      ctx.save();
+      if(enemigo.estado == 'vivo') ctx.fillStyle = 'red';
+      if(enemigo.estado == 'muerto') 
+          {
+            ctx.fillStyle = 'black';
+            console.log('pintado negro');
+          }
+          
+      ctx.drawImage(imgEnemigo,enemigo.x,enemigo.y,enemigo.width,enemigo.height);
+    }
 }
 
 function dibujarFondo()
@@ -69,10 +64,10 @@ function dibujarFondo()
 function dibujarNave()
 {
     ctx.save(); // guarda la informacion actual del contexto
-    //ctx.drawImage(imgNave,nave.x,nave.y,nave.width,nave.height);
+    ctx.drawImage(imgNave,nave.x,nave.y,nave.width,nave.height);
     //cambiar a Imagen borrar fillstyle y fillrect
-    ctx.fillStyle='red';
-    ctx.fillRect(nave.x,nave.y,nave.width,nave.height);
+    //ctx.fillStyle='red';
+   // ctx.fillRect(nave.x,nave.y,nave.width,nave.height);
     ctx.restore();
 }
 
@@ -88,32 +83,42 @@ function dibujarDisparos()
     ctx.restore();
 }
 
-function agregarEventosTeclado()
+function dibujarDisparosEnemigos()
 {
-    agregarEvento(document,"keydown",function(e){
-       //ponemos en true la tecla presionada
-        teclado[e.keyCode]=true;   
-    });
-    
-    agregarEvento(document,"keyup",function(e){
-       //ponemos en true la tecla que dejo de ser presionada
-        teclado[e.keyCode]=false;    
-    });
-    
-        function agregarEvento(elemento,nombreEvento,funcion)
+    for (var i in disparosEnemigos)
         {
-            if(elemento.addEventListener)// si existe utilizalo chrome firefox opera
-            {
-                elemento.addEventListener(nombreEvento,funcion,false);
-            }
-            else if(elemento.attachEvent)// Internet explorer
-            {
-                elemento.attachEvent(nombreEvento,funcion);
-            }
+            var disparo=disparosEnemigos[i];
+            ctx.save();
+            ctx.fillStyle='yellow';
+            ctx.fillRect(disparo.x,disparo.y,disparo.width,disparo.height);
+            ctx.restore();
 
         }
-
 }
+
+function agregarEventosTeclado()
+{
+  agregarEvento(document,"keydown",function(e){
+    //Ponemos en true la tecla presionada
+    teclado[e.keyCode] = true;
+  });
+  agregarEvento(document,"keyup",function(e){
+    //Ponemos en true la tecla que dejo de ser presionado
+    teclado[e.keyCode] = false;
+  });
+  function agregarEvento(elemento,nombreEvento,funcion){
+         if(elemento.addEventListener)
+         {
+                     //Navegadores de verdad
+                     elemento.addEventListener(nombreEvento,funcion,false);
+         }
+         else if(elemento.attchEvent){
+              //intenet explorer
+              elemento.attchEvent(nombreEvento,funcion);
+        }
+
+   }
+  }
 
 function moverDisparos()
 {
@@ -127,6 +132,101 @@ function moverDisparos()
     }); // devolver un arreglo que cumpla con cierta condicion
 }
 
+function moverNave()
+{
+    if(teclado[37]){
+      //movimiento a la izquierda
+      nave.x -= 6;
+      if(nave.x <0) nave.x - 0;
+    }
+    if(teclado[39]){
+      //movimiento a la derecha
+      var limite = canvas.width - nave.width;
+      nave.x += 6;
+      if(nave.x >limite) nave.x = limite;
+    }
+    if(teclado[32]){
+      //Disparos
+      if(!teclado.fire){
+          fire();
+          teclado.fire = true;
+      }
+    }
+    else teclado.fire = false;
+
+  }
+
+function moverDisparosEnemigos()
+{
+    for(var i in disparosEnemigos){
+      var disparo = disparosEnemigos[i];
+      disparo.y += 2;
+    }
+    disparosEnemigos = disparosEnemigos.filter(function(disparo){
+      return disparo.y < canvas.height;
+    });
+  }
+
+function actualizaEnemigos()
+{
+      function agregarDisparosEnemigos(enemigo){
+        return {
+          x: enemigo.x,
+          y: enemigo.y,
+          width: 10,
+          height: 33,
+          contador: 0
+        }
+      }
+     if(juego.estado == 'iniciando'){
+          for(var i =0;i<10;i++){
+            enemigos.push({
+              x: 10 + (i*50),
+              y: 10,
+              height: 32,
+              width: 44,
+              estado: 'vivo',
+              contador: 0
+            });
+          } 
+          juego.estado = 'jugando';
+
+     }
+     for(var i in enemigos)
+        {
+            var enemigo = enemigos[i];
+            if(!enemigo) continue;
+            if(enemigo && enemigo.estado == 'vivo'){
+              enemigo.contador++;
+              enemigo.x += Math.sin(enemigo.contador * Math.PI /90)*1.5;
+
+             if(aleatorio(0,enemigos.length * 10) == 4)
+             {
+              disparosEnemigos.push(agregarDisparosEnemigos(enemigo));
+             }
+        }
+        if(enemigo && enemigo.estado == 'hit'){
+             enemigo.contador++;
+             if(enemigo.contador >= 20){
+              enemigo.estado = 'muerto';
+              enemigo.contador = 0;
+             }
+        }
+     }
+     enemigos = enemigos.filter(function(enemigo){
+      if(enemigo && enemigo.estado != 'muerto' ) return true;
+      return false;
+     });
+  }
+
+function aleatorio(inferior,superior)
+{
+    var posibilidades= superior-inferior;
+    var a = Math.random() * posibilidades;
+    a= Math.floor(a);
+    return parseInt(inferior)+a;
+}
+
 function fire()
 {
     disparos.push({
@@ -134,83 +234,6 @@ function fire()
        y:nave.y-10,
        width:10,
        height:25
-    });
-}
-
-function moverNave()
-{
-    if(teclado[37])//IZQUIERDA
-    {
-        nave.x -=6;//VELOCIDAD DE LA NAVE
-        if(nave.x<0)
-            nave.x=0;
-    }
-    
-    if(teclado[39])//DERECHA
-    {
-        var limite = canvas.width - nave.width;
-        nave.x +=6;
-        if(nave.x>limite)
-            nave.x=limite;
-    }
-    
-    if(teclado[32]) //BARRA ESPACIADORA
-        {
-            if(!teclado.fire)
-                {
-                  fire();
-                    teclado.fire =true;
-                }
-
-        }
-    else 
-        {
-            teclado.fire=false;
-        }
-    
-}
-
-function actualizaEnemigos()
-{
-    if(juego.estado=='iniciando')
-        {
-            for(var i=0;i<10;i++)
-                {
-                    enemigos.push({
-                       x:10 +(i*50),
-                       y:10,
-                       width:40,
-                       height:30,
-                       estado:'vivo',
-                       contador:0
-                    });
-                }
-            juego.estado='jugando';
-        }
- 
-     for(var i in enemigos)
-      {
-         var enemigo= enemigos[i];          
-         if(!enemigo)continue;          
-         if(enemigo && enemigo.estado=='vivo')
-             {
-                 enemigo.contador++;
-                 enemigo.x +=Math.sin(enemigo.contador * Math.PI /90)*1.5;
-             }
-      }
-    
-     if(enemigo && enemigo.estado=='hit')
-        {
-            enemigo.contador++;
-            if(enemigo.contador>=20)
-                {
-                    enemigo.contador='muerto';
-                    enemigo.contador=0;
-                }
-        }
-       enemigos=enemigos.filter(function(enemigo){
-       if(enemigo && enemigo.estado !='muerto') return true;
-        return false;     
     });
 }
 
@@ -264,10 +287,12 @@ function frameLoop()
 {
     moverNave();
     moverDisparos();
+    moverDisparosEnemigos();
     dibujarFondo();
     verificarContacto();
     actualizaEnemigos();
     dibujarEnemigos();
+    dibujarDisparosEnemigos();
     dibujarDisparos();
     dibujarNave();
 } 
