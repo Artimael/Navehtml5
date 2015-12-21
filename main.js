@@ -267,7 +267,7 @@ function hit(a,b)
 
 function verificarContacto()
 {
-    for(var i in disparos)
+    for(var i in disparos) // Hit al enemigo
         {
             var disparo=disparos[i];
             for(j in enemigos)
@@ -279,6 +279,21 @@ function verificarContacto()
                             enemigo.contador=0;
                             
                         }
+                }
+        }
+    
+    if(nave.estado=='hit' || nave.estado=='muerto')
+        {
+            return;
+        }
+    
+    for(var i in disparosEnemigos)
+        {
+            var disparo =disparosEnemigos[i];
+            if(hit(disparo,nave))
+                {
+                    nave.estado='hit';
+                    console.log('tocaron la nave');
                 }
         }
 }
