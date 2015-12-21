@@ -8,7 +8,9 @@ var nave=
             x:100,
             y:canvas.height-100,
             width:52,
-            height:32
+            height:32,
+            contador:0
+    
 };
 
 var juego=
@@ -160,6 +162,20 @@ function moverNave()
       }
     }
     else teclado.fire = false;
+    
+    if(nave.estado=='hit')
+        {
+            nave.contador++;
+            if(nave.contador>=20)
+                {
+                    nave.contador=0;
+                    nave.estado='muerto';
+                    juego.estado='perdido';
+                    textoRespuesta.titulo='GameOver';
+                    textoRespuesta.subtitulo='Presiona la tecla R para continuar';
+                    textoRespuesta.contador=0;
+                }
+        }
 
   }
 
