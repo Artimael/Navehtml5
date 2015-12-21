@@ -16,6 +16,13 @@ var juego=
             estado:'iniciando'
 };
 
+var textoRespuesta=
+{
+    contador:-1,
+    titulo:'',
+    subtitulo:''
+};
+
 //Definir variables 
 var fondo,imgNave,imgEnemigo;
 var teclado={};
@@ -298,8 +305,66 @@ function verificarContacto()
         }
 }
 
+function dibujaTexto()
+{
+    if(textoRespuesta.contador==-1)
+        {
+            return;
+        }
+    
+    var alpha=textoRespuesta.contador/50.0;//crear una ilusion de como va apareciendo el texto transparecia
+    
+    if(textoRespuesta.contador>1)
+        {
+            for(var i in enemigos)
+                {
+                    delete enemigos[i];
+                }
+        }
+    ctx.save();
+    ctx.globalAlpha=alpha;
+    
+    if(juego.estado=='perdido')
+        {
+            ctx.fillStyle='white';
+            ctx.font='Bold 40pt Arial';
+            ctx.fillText(textoRespuesta.titulo,140,200);
+            ctx.font='14pt Arial';
+            ctx.fillText(textoRespuesta.subtitulo,190,250);
+            
+        }
+    if(juego.estado=='victoria')
+        {
+            ctx.fillStyle='white';
+            ctx.font='Bold 25pt Arial';
+            ctx.fillText(textoRespuesta.titulo,120,200);
+            ctx.font='14pt Arial';
+            ctx.fillText(textoRespuesta.subtitulo,190,250);
+            
+        }
+    
+}
+
+function actualizarEstadoJuego()
+{
+    if(juego.estado=='jugando' && enemigos.length==0)
+        {
+            juego.estado='victoria';
+            textoRespuesta.titulo='Derrotaste a los enemigos';
+            textoRespuesta.subtitulo='Presiona la tecla R para reiniciar';
+            textoRespuesta.contador=0;
+            
+        }
+    if(textoRespuesta.contador>=0)
+        {
+            textoRespuesta.contador++;
+        }
+        
+}
+
 function frameLoop()
 {
+    actualizarEstadoJuego();
     moverNave();
     moverDisparos();
     moverDisparosEnemigos();
@@ -309,6 +374,7 @@ function frameLoop()
     dibujarEnemigos();
     dibujarDisparosEnemigos();
     dibujarDisparos();
+    dibujaTexto();
     dibujarNave();
 } 
 
