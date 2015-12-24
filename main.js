@@ -146,7 +146,7 @@ function moverNave()
     if(teclado[37]){
       //movimiento a la izquierda
       nave.x -= 6;
-      if(nave.x <0) nave.x - 0;
+      if(nave.x <0) nave.x=0;
     }
     if(teclado[39]){
       //movimiento a la derecha
@@ -183,10 +183,10 @@ function moverDisparosEnemigos()
 {
     for(var i in disparosEnemigos){
       var disparo = disparosEnemigos[i];
-      disparo.y += 2;
+      disparo.y += 3;
     }
     disparosEnemigos = disparosEnemigos.filter(function(disparo){
-      return disparo.y < canvas.height;
+      return disparo.y < canvas.height-50;
     });
   }
 
@@ -202,7 +202,8 @@ function actualizaEnemigos()
         }
       }
      if(juego.estado == 'iniciando'){
-          for(var i =0;i<10;i++){
+          for(var i =0;i<10;i++)
+          {
             enemigos.push({
               x: 10 + (i*50),
               y: 10,
@@ -323,59 +324,59 @@ function verificarContacto()
 
 function dibujaTexto()
 {
-    if(textoRespuesta.contador==-1)
-        {
-            return;
-        }
+  if(textoRespuesta.contador == -1) return;
+  var alpha = textoRespuesta.contador/50.0;
+  if(textoRespuesta.contador>1){
+    for(var i in enemigos)
+    {
+      delete enemigos[i];
+        
+    }
+    for(var i in disparosEnemigos)
+    {
+      delete disparosEnemigos[i];
+    }
+    for(var i in disparos)
+    {
+      delete disparos[i];        
+    }
+  }
     
-    var alpha=textoRespuesta.contador/50.0;//crear una ilusion de como va apareciendo el texto transparecia
-    
-    if(textoRespuesta.contador>1)
-        {
-            for(var i in enemigos)
-                {
-                    delete enemigos[i];
-                }
-        }
-    ctx.save();
-    ctx.globalAlpha=alpha;
-    
-    if(juego.estado=='perdido')
-        {
-            ctx.fillStyle='white';
-            ctx.font='Bold 40pt Arial';
-            ctx.fillText(textoRespuesta.titulo,140,200);
-            ctx.font='14pt Arial';
-            ctx.fillText(textoRespuesta.subtitulo,190,250);
-            
-        }
-    if(juego.estado=='victoria')
-        {
-            ctx.fillStyle='white';
-            ctx.font='Bold 25pt Arial';
-            ctx.fillText(textoRespuesta.titulo,120,200);
-            ctx.font='14pt Arial';
-            ctx.fillText(textoRespuesta.subtitulo,190,250);
-            
-        }
-    
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  if(juego.estado == 'perdido'){
+    ctx.fillStyle = 'white';
+    ctx.font = 'Bold 40pt Arial';
+    ctx.fillText(textoRespuesta.titulo, 140,200);
+    ctx.font = '14pt Arial';
+    ctx.fillText(textoRespuesta.subtitulo, 190,250);
+  }
+  if(juego.estado == 'victoria'){
+    ctx.fillStyle = 'white';
+    ctx.font = 'Bold 40pt Arial';
+    ctx.fillText(textoRespuesta.titulo, 140,200);
+    ctx.font = '14pt Arial';
+    ctx.fillText(textoRespuesta.subtitulo, 190,250);
+  }
+    ctx.globalAlpha = 1;
 }
 
 function actualizarEstadoJuego()
 {
-    if(juego.estado=='jugando' && enemigos.length==0)
-        {
-            juego.estado='victoria';
-            textoRespuesta.titulo='Derrotaste a los enemigos';
-            textoRespuesta.subtitulo='Presiona la tecla R para reiniciar';
-            textoRespuesta.contador=0;
-            
-        }
-    if(textoRespuesta.contador>=0)
-        {
-            textoRespuesta.contador++;
-        }
-        
+  if(juego.estado == 'jugando' && enemigos.length == 0){
+        juego.estado = 'victoria';
+        textoRespuesta.titulo = 'Derrotaste a los enemigos';
+        textoRespuesta.subtitulo = 'Presiona la tecla R para reiniciar';
+        textoRespuesta.contador = 0;
+  }
+  if(textoRespuesta.contador >= 0){
+      textoRespuesta.contador++;
+  }
+  if((juego.estado == 'perdido' || juego.estado == 'victoria') && teclado[82]){
+         juego.estado = 'iniciando';
+         nave.estado = 'vivo';
+         textoRespuesta.contador = -1;
+  }
 }
 
 function frameLoop()
