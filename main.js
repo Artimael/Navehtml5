@@ -35,6 +35,7 @@ var disparosEnemigos=[];
 var enemigos=[];
 var imagenes= ['space.png','nave.png','enemy.png'];
 var preloader;
+var SounddisparoNave,SounddisparoEnemigo,SoundmuerteNave,SoundmuerteEnemigo;
 //Definicion de funciones 
 function loadMedia()
 {
@@ -64,6 +65,22 @@ function cargar()
                 imgNave.src='nave.png';
                 imgEnemigo=new Image();
                 imgEnemigo.src='enemy.png';
+                
+                SounddisparoNave=document.createElement('audio');
+                document.body.appendChild(SounddisparoNave);
+                SounddisparoNave.setAttribute('src','disparoNave.wav');
+                
+                SounddisparoEnemigo=document.createElement('audio');
+                document.body.appendChild(SounddisparoEnemigo);
+                SounddisparoEnemigo.setAttribute('src','disparoEnemigo.wav');
+                
+                SoundmuerteNave=document.createElement('audio');
+                document.body.appendChild(SoundmuerteNave);
+                SoundmuerteNave.setAttribute('src','muertenave.wav');       
+                
+                SoundmuerteEnemigo=document.createElement('audio');
+                document.body.appendChild(SoundmuerteEnemigo);
+                SoundmuerteEnemigo.setAttribute('src','muerteenemigo.wav');                  
             }
     }
 
@@ -244,6 +261,9 @@ function actualizaEnemigos()
 
              if(aleatorio(0,enemigos.length * 10) == 4)
              {
+                SounddisparoEnemigo.pause();
+                SounddisparoEnemigo.currentTime=0;
+                SounddisparoEnemigo.play();
               disparosEnemigos.push(agregarDisparosEnemigos(enemigo));
              }
         }
@@ -271,6 +291,9 @@ function aleatorio(inferior,superior)
 
 function fire()
 {
+    SounddisparoNave.pause();
+    SounddisparoNave.currentTime=0;
+    SounddisparoNave.play();
     disparos.push({
        x:nave.x+20,
        y:nave.y-10,
@@ -317,6 +340,9 @@ function verificarContacto()
                     var enemigo=enemigos[j];
                     if(hit(disparo,enemigo))
                         {
+                            SoundmuerteEnemigo.pause();
+                            SoundmuerteEnemigo.currentTime=0;
+                            SoundmuerteEnemigo.play();
                             enemigo.estado='hit';
                             enemigo.contador=0;
                             
@@ -334,6 +360,9 @@ function verificarContacto()
             var disparo =disparosEnemigos[i];
             if(hit(disparo,nave))
                 {
+                    SoundmuerteNave.pause();
+                    SoundmuerteNave.currentTime=0;
+                    SoundmuerteNave.play();
                     nave.estado='hit';
                     console.log('tocaron la nave');
                 }
