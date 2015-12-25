@@ -33,21 +33,39 @@ var disparos=[];
 var disparosEnemigos=[];
 //arreglo que almacena los enemigos
 var enemigos=[];
-
+var imagenes= ['space.png','nave.png','enemy.png'];
+var preloader;
 //Definicion de funciones 
 function loadMedia()
 {
-    fondo = new Image(); 
-    fondo.src = 'space.png'; 
-    fondo.onload = function()
-    { 
-        var intervalo =         window.setInterval(frameLoop,1000/40); //velocidad con que carga las cosas
-    }
-    imgNave= new Image();
-    imgNave.src ='nave.png';
-    imgEnemigo= new Image();
-    imgEnemigo.src='enemy.png';
+    preloader= new PreloadJS();
+    preloader.onProgress=progresoCarga;
+    cargar();
 } 
+
+function cargar()
+{
+        while(imagenes.length>0)
+            {
+                var imagen=imagenes.shift();//es sacar el ultimo elemento, y guardarlo en imagen
+                preloader.loadFile(imagen);
+            }
+    }
+
+ function progresoCarga()
+{
+        console.log(parseInt(preloader.progress *100)+"%");
+        if(preloader.progress==1)
+            {
+                var intervalo=window.setInterval(frameLoop,1000/20);
+                fondo= new Image();
+                fondo.src='space.png';
+                imgNave= new Image();
+                imgNave.src='nave.png';
+                imgEnemigo=new Image();
+                imgEnemigo.src='enemy.png';
+            }
+    }
 
 function dibujarEnemigos()
 {
@@ -397,6 +415,10 @@ function frameLoop()
 
 
 //ejecucion de funciones
+window.addEventListener('load',init);
 
-loadMedia();
-agregarEventosTeclado();
+function init()
+{
+ loadMedia();
+ agregarEventosTeclado();   
+}
